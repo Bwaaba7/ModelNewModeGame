@@ -1,7 +1,7 @@
 pré-requis
 avoir node-js
 ----------------------------------------
-version utlisées:
+version utlisées:-
 
 node-js: 6.4.1
 electron:4.1.0
