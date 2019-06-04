@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parametre</title>
+    <style>
+            body{
+                margin: 0px;
+                padding: 0px;
+
+            }
+            div#validation{
+                border: groove 2px blue;
+                background: grey;
+            }
+            p{
+                background: rgb(41, 165, 173);
+                text-align: center;
+            }
+
+            p#avertissement{
+                background: red;
+            }
+
+            div{
+                padding: 20px;
+                border-bottom: solid 1px black;
+            }
+
+            nav{
+               width:100%;
+                background:#424558 ;
+            }
+            
+            nav ul{
+                margin: 0px;
+                padding: 0px;
+                overflow: hidden;
+            }
+
+            nav li{
+                list-style-type: none;
+                float: left;
+            }
+            a{
+                display: inline-block;
+                text-decoration: none;
+                padding: 20px 30px;
+                color:greenyellow;
+                
+                
+            }
+
+            a:hover{
+                color:#FFF;
+            }
+    </style>
+ </head>
+<body>
+  <nav>
+      <ul>
+            <li> <a href="accueil.html" id="home">Accueil</a> </li>
+            <li><a href="aide.html" id="helpGame">Aide</a></li>
+            <li><a href="" id="newGame" >Jouer</a> </li>
+           
+      </ul>
+   </nav>
+  <p id="info">Mettre les valeurs avec leurs unité , et les la totalité des formats .</p>
+  <div>
+      <div id="background">
+          <Label>Couleur arrière plan:</Label>
+          <input id="background-input" type="text"/>
+      </div>
+      <div id="formule-background">
+          <label>Couleur fond formule:</label>
+          
+          <input id="formule-background-input" type="text"/>
+      </div>
+      <div>
+          <label>Taille caractère édition de fichier</label>
+          <input id="font-size-input-edit" type="text"/>
+      </div>
+      <div id="font-size">
+          <label>Taille des caractère Formule clickable:</label>
+          <input id="font-size-input" type="text"/>
+      </div>
+      
+      <div id="selected-node">
+          <label>Couleur noeud selectioné:</label>
+          <input id="select-node-input" type="text"/>
+      </div>
+      <!-- <div>
+        <label>Surlignage selection formule:</label>
+        <input id="part-formule" type="text"/>
+      </div> -->
+      <div id="validation">
+        <p id="avertissement">ATTENTION CELA VA RECHARGER LES PAGES VOUS RISQUEZ DE PERDRE VOS AVANCEES ! </p>
+        <button id="register">Enregistrer les modifications</button>
+      </div>
+    
+  </div>
+  <script>
+    const {ipcRenderer,remote} = require('electron');
+    const {BrowserWindow,webContents} = require('electron').remote;
+    const fs= require('fs');
+    require('./nav.js');
+    var conf  = remote.getGlobal('conf');
+    document.querySelector('body').style.background = conf.background;
+    fs.readFile('param.json', 'utf8', function readFileCallback(err, data){
+        if (err){
+            console.log(err);
+        } else {
+        conf = JSON.parse(data); //now it an object
+        console.log("param conf",conf.configuration[0]);
+        document.querySelector('input#background-input').value = conf.configuration[0].background;
+        document.querySelector('input#formule-background-input').value = conf.configuration[0].formule_background;
+        document.querySelector('input#font-size-input').value = conf.configuration[0].font_size;
+        document.querySelector('input#select-node-input').value = conf.configuration[0].selected_node;
+        document.querySelector('input#font-size-input-edit').value = conf.configuration[0].edit_font_size;
+    }});
+
+
+    document.querySelector('button#register').addEventListener('click',function(){
+      conf.configuration[0].background =  document.querySelector('input#background-input').value ;
+      conf.configuration[0].formule_background = document.querySelector('input#formule-background-input').value;
+      conf.configuration[0].font_size = document.querySelector('input#font-size-input').value;
+      conf.configuration[0].selected_node = document.querySelector('input#select-node-input').value;
+      conf.configuration[0].edit_font_size =  document.querySelector('input#font-size-input-edit').value;
+      fs.writeFile('param.json',JSON.stringify(conf),function(err){
+        if(err) console.log(err);
+      });
+      
+     ipcRenderer.send('majParam',[conf.configuration[0]]);
+
+     tabwebcontent = webContents.getAllWebContents();
+     
+     console.log("tabcontent",tabwebcontent);
+     for( i = 0; i < tabwebcontent.length; i++){
+       
+        console.log("push",tabwebcontent[i].id);
+        ipcRenderer.sendTo(tabwebcontent[i].id,'majParam');
+     }
+     location.reload();
+    });
+
+   
+ </script>
+</body>
+</html>

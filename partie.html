@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title> Partie en cours </title>
+    <link rel="stylesheet" href="treant-js-master/Treant.css">
+    <link rel="stylesheet" href="treant-js-master/examples/collapsable/collapsable.css">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="treant-js-master/vendor/perfect-scrollbar/perfect-scrollbar.css">
+    <style>
+        
+        div.chart{
+            top: 0px;
+            border: groove black 2px;
+            width: auto;
+            overflow: scroll;
+        }
+
+        
+
+       #buttons{
+            border: ridge 2mm ghostwhite;
+        }
+
+        
+
+        #currentformule{
+            
+            background-color: cornflowerblue;
+           
+            margin: 80px auto;
+            
+        }
+
+        #currentformule p{
+             text-align:center; 
+             vertical-align: middle;
+             font-size: 40px;
+             width:auto;
+            
+        }
+
+        #wrapformule{
+
+            float: right;
+            border: solid 5px black;
+            width: 70%;
+            margin: auto;
+            min-height: 100px;
+            height: auto;
+           
+        }
+
+    </style>
+</head>
+<body>
+    <div id="buttons">
+        <button id="window-tree" class="myButton">Open window for tree</button>
+        <button id="tree-visibility" class="myButton">Hide Tree</button>
+        <button id="new-exp" class="myButton">New Expression</button>
+
+        <button id="SaveGame" class="myButton"> Save Game</button>
+        <button id="LoadGame" class="myButton">Load Game</button>
+    </div>
+    
+    <div id="div-new-exp">
+        <label>New Expression :</label>
+        <input type="text" id="input-new-exp"/>
+        <button  id="button-valid-new-exp">Validate</button>
+    </div>
+    <div id="wrapformule">
+            <div id="currentformule"> <p id="formule">x+a-b</p></div>
+    </div>
+    
+   <div>
+      
+    <div class="chart" id="collapsable-example"></div>
+   </div>
+   
+    <script src="treant-js-master/vendor/raphael.js"></script>
+    <script src="treant-js-master/Treant.js"></script>
+    
+    <script src="treant-js-master/vendor/jquery.min.js"></script>
+    <script src="treant-js-master/vendor/jquery.easing.js"></script>
+    
+    
+    <script src="partie.js"></script>
+    <script>
+
+        const { ipcRenderer,remote} = require('electron');
+        const { BrowserWindow,dialog} =   require('electron').remote;
+        const fs = require('fs');
+        
+        var treeWindow = false;
+        var windT = null;
+        var nodeselected = null;
+        var tree;
+        var treejson = chart_config;
+        conf = remote.getGlobal('conf');
+       
+        
+       
+        pelts = document.querySelectorAll('p');
+        for(i = 0; i <pelts.length;i++)
+            pelts[i].style.fontSize = conf.font_size;
+        console.log("pelts",pelts);
+        
+        document.querySelector('body').style.background = conf.background;
+        
+        document.querySelector('#formule').style.background = conf.formule_background;
+
+        
+        
+
+        document.querySelector('div#div-new-exp').style.display = 'none';
+
+        document.querySelector('button#LoadGame').addEventListener('click',function(){
+            const savePath = dialog.showOpenDialog({"filters":[{name : "Game",extensions:['json']}]});  
+            
+        });
+
+
+        document.querySelector('button#SaveGame').addEventListener('click',function(){
+                dialog.showSaveDialog((fileName) =>{
+                    if(fileName === undefined){
+                        alert("sauvegarde non faite");
+                    }
+                    let content='coucou';
+                
+                fs.writeFile(fileName,content,function(err){
+                    if(err){
+                        return console.log(err);
+                    }
+                    console.log("The file was created");
+                    alert("file saved");
+                });
+            });
+         });
+
+
+        document.querySelector('button#tree-visibility').addEventListener('click',function(){
+                elt =  document.querySelector('div#collapsable-example');
+               
+                visibility = elt.style.display;
+                if(visibility == 'hide' || visibility =='none'){
+                    elt.style.display ='block';
+                    this.innerText = "Hide Tree";
+                }
+                else{
+                    elt.style.display = 'none';
+                    
+                    this.innerText = "Show Tree";
+                }
+        });
+      
+
+        window.addEventListener('beforeunload',function(){
+            if(windT.webContents.id !== null)
+                ipcRenderer.sendTo(windT.webContents.id,'fatherclose');
+        });
+
+
+         // à changer , utiliser l'envoi par valeur de webcontentsid
+        document.querySelector('button#window-tree').addEventListener('click',function(){
+                
+                if(treeWindow == false){
+                   ipcRenderer.send('askCreateWindowTree'); 
+                   
+                    treeWindow = true;
+                   
+                }
+                else
+                   {
+                    windT.show();
+                    console.log(windT.webContents.id);
+                    ipcRenderer.sendTo(windT.webContents.id,'majTree',[treejson]);
+                   }
+                   
+               
+        });
+
+
+        ipcRenderer.on('windTclose',function(){
+                windT = null;
+                treeWindow = false;
+        });
+
+        ipcRenderer.on('repCreateWindowTree',function(){
+
+            treeWindow = true;
+            windT = remote.getGlobal('windtree');
+            windT.show();
+           
+        });
+       
+        ipcRenderer.on('initwindT',function(){
+            console.log('init');
+            
+            ipcRenderer.sendTo(windT.webContents.id,'majTree',[treejson]);
+        });
+        var nb = 0;
+        tree = new Treant( treejson );
+        pformule  = document.querySelector('p#formule');
+
+        document.querySelector('button#new-exp').addEventListener('click',function(){
+                console.log("new exp");
+                
+                document.querySelector('div#div-new-exp').style.display = 'block';
+                
+
+             
+        });   
+
+        document.querySelector('button#button-valid-new-exp').addEventListener('click',function(){
+                // ajouter la verification de l'expression par rapport au règles
+                treejson = treeExemple2;
+               pformule.innerHTML = document.querySelector('input#input-new-exp').value;
+               let divtree = document.querySelector('div#collapsable-example');
+               while (divtree.firstChild) {
+                    divtree.removeChild(divtree.firstChild);
+                }
+                document.querySelector('div#collapsable-example').style.display = 'block';
+                tree = new Treant( treejson );
+
+                
+                makeNodeids();
+                document.querySelector('div#div-new-exp').style.display = 'none';
+                document.querySelector('input#input-new-exp').value="";
+                ipcRenderer.sendTo(windT.webContents.id,'majTree',[treejson]);
+
+        });
+
+
+        function makeNodeids(){
+            var nodes = document.getElementsByClassName("node");
+
+                for(var i = 0; i < nodes.length; i++) {
+                        nodes[i].addEventListener('click',nodeclick(nodes[i]));
+                }
+
+               
+
+                var pnodes = document.getElementsByClassName("node-name");
+                console.log("pnodes = ",pnodes);
+                for(var i = 0; i < pnodes.length; i++) {
+                        const att = document.createAttribute("onclick");
+                        att.value ="changtoclicknode(event)";
+                        pnodes[i].setAttributeNode(att);
+
+                        pnodes[i].addEventListener('click',function(){
+
+                            if(nodeselected !== null)
+                                {
+                                    nodeselected.style.background = 'none';
+                                }
+                                nodeselected =this;
+                                nodeselected.style.background = conf.selected_node;
+                        });
+
+                    
+                }
+                preparecollapsenode();
+        }
+
+
+        function nodeclick(elt){
+                    newf = elt.querySelector('.node-name');
+                    pformule.innerHTML = newf.innerHTML;
+                    console.log("node selected");
+                    console.log(newf);
+                }
+
+
+        
+
+         function changtoclicknode(e){
+                console.log("change to current node");
+
+                if(e.target.classList.contains("collapse-switch")){
+                    for(var i = 0;i < nb; i++){
+                        if(e.target.classList.contains("l"+i)){
+                            console.log(i);
+                            let parent = e.target.parentNode;
+                            pformule.innerHTML =parent.getElementsByClassName("node-name")[0].innerHTML;
+
+                            if(nodeselected !== null)
+                            {
+                                nodeselected.style.background = 'none';
+                            }
+                            nodeselected =parent.getElementsByClassName("node-name")[0];
+                            nodeselected.style.background = conf.selected_node;
+
+                            console.log(parent);
+                        }
+                            
+                    }
+                        
+                }
+                else{
+                    pformule.innerHTML =e.target.innerHTML;
+                    if(nodeselected !== null)
+                    {
+                        nodeselected.style.background = 'none';
+                    }
+                    nodeselected =e.target;
+                    nodeselected.style.background = '#3EFFE6';
+
+                }
+                
+
+                
+         }
+
+         
+       
+
+        function preparecollapsenode(){
+            nb = 0;
+            const divs = document.getElementsByClassName("node");
+            for(var i = 0;i < divs.length; i++){
+                const link = divs[i].getElementsByClassName("collapse-switch");
+                console.log(link);
+                if(link !== null && link !== undefined && link.length >0){
+                    console.log(" link find");
+                    const plink = divs[i].getElementsByClassName("node-name");
+                    plink[0].classList.add("l"+nb.toString(10));
+                    link[0].classList.add("l"+nb.toString(10));
+                    nb++;
+                    
+                }
+            }
+
+
+            var anodes = document.getElementsByClassName("collapse-switch");
+            for(var i = 0; i < anodes.length; i++) {
+                
+                   const att = document.createAttribute("onclick");
+                    att.value ="changtoclicknode(event)";
+                    anodes[i].setAttributeNode(att);
+                   
+                  
+            }
+
+        }
+
+
+        ipcRenderer.on('windT-set-exp',function(event,arg){
+
+                pformule.innerHTML = arg[0];
+
+        });
+
+    
+
+
+        ipcRenderer.on('majParam',function(){
+                location.reload();
+        });
+       makeNodeids();
+
+
+      
+    </script>
+</body>
+</html>

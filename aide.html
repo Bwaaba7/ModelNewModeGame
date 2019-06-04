@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aide</title>
+    <style>
+         body{
+                margin: 0px;
+                padding: 0px;
+
+            }
+            nav{
+               width:100%;
+                background:#424558 ;
+            }
+            
+            nav ul{
+                margin: 0px;
+                padding: 0px;
+                overflow: hidden;
+            }
+
+            nav li{
+                list-style-type: none;
+                float: left;
+            }
+            a{
+                display: inline-block;
+                text-decoration: none;
+                padding: 20px 30px;
+                color:greenyellow;
+                
+                
+            }
+            a:hover{
+                color:#FFF;
+            }
+            div#exemple div,div#chgt-param,div#game{
+                margin-left:25%;
+                width: 50%;
+                margin-bottom: 50px;
+                border-bottom: solid 5px black;
+                background: rgb(208, 214, 192);
+                display: none;
+            }
+
+            div#exemple div>p{
+                    margin:20px;
+            }
+            
+            p#Rules,p#Graphics,p#Formules,p#Operators{
+                font-size:20px;
+                border-bottom:red solid 1px; 
+                border-top:red solid 1px; 
+                text-align: center;
+                background: #AAAAAA;
+                
+            }
+            
+            div#exemple >p:nth-child(1){
+               border: red ridge 2px;
+               border-radius: 3px 10px 0px 20px;
+               background: #AAAAAA;
+            }
+            div#exemple{
+                display: none;
+            }
+
+            p#exemple,p#chgt-param,p#game{
+                border-bottom: inset;
+                border-top:inset blue;
+               text-align: center;
+               background: #FFF;
+            }
+            
+    </style>
+ </head>
+<body>
+    <nav>
+        <ul>
+              <li> <a href="accueil.html" id="home">Accueil</a> </li>
+              <li> <a href="parametre.html" id="paramGame" >Paramètre</a></li>
+              <li><a href="" id="newGame" >Jouer</a> </li>
+             
+        </ul>
+     </nav>
+ 
+     <p id="exemple">Exemple de configuration</p>
+  <div id="exemple">
+        
+        <p>Pour mieux comprendre voir, <a href="https://github.com/huacayacauh/LatexDragon" target="_blank">le projet LatexDragon</a> ainsi que <a href="https://javacc.org/" target="_blank">Javacc</a>  </p> 
+        <p>Exemple de fichier permetant de configurer une partie (Formules représente une manière possible d'écrire l'expression pour le serveur).</p>
+        <p id="Rules">Rules</p>
+        <div id="ex-rules">
+            <p>((A)) 			=(§contextMenu)=> (A)</p>
+            <p> (0) 			=(§contextMenu)=> 0</p>
+            <p>(1) 			=(§contextMenu)=> 1</p>
+            <p>(2) 			=(§contextMenu)=> 2</p>
+            <p>(A) 			=(§contextMenu)=> A</p>
+            
+            
+            
+            
+            <p>A + 0 			=(§contextMenu)=> A</p>
+            
+            <p>A 			=(§contextMenu)=> (A) + 0</p>
+            <p>A + B 			=(§contextMenu)=> ( A + B )</p>
+            
+            <p>A + B 			=(§drag_and_drop)=> B + A</p>
+            <p>A + ( B + C ) 		=(§drag_and_drop)=> B + ( A + C )</p>
+            
+            
+            <p>A + - B 		=(§contextMenu)=> A - B</p>
+            
+            <p>A + A			=(§contextMenu)=> A * ( 1 + 1 )</p>
+            <p>A + A			=(§contextMenu)=> (A) * 2</p>
+            
+            <p>( A * B ) + C		=(§drag_and_drop)=> A * B + C</p>
+            
+            
+            
+            
+            <p>A * 1 			=(§contextMenu)=> A</p>
+            <p>A 			=(§contextMenu)=> (A) * 1</p>
+            <p>A * B 			=(§contextMenu)=> ( A * B )</p>
+            <p>A * B 			=(§drag_and_drop)=> B * A</p>
+            <p>A * ( B * C ) 		=(§drag_and_drop)=> B * ( A * C )</p>
+            
+            
+            <p>( A + B ) * C		=(§drag_and_drop)=> A * C + B * C</p>
+            
+            
+            <p>toto 			=(§contextMenu)=> tata</p>
+            
+            <p>x = B			=(§contextMenu)=> congrat { x = B }</p>
+            
+            <p>A + B = C		=(§drag_and_drop)=> ( A + B ) - B = C - B</p>
+            <p>A - B = C		=(§drag_and_drop)=> ( A - B ) + B = C + B</p>
+            <p>A * B = C		=(§drag_and_drop)=> ( A * B ) / B = C / B</p>
+            <p>A / B = C		=(§drag_and_drop)=> ( A / B ) * B = C * B</p>
+            
+            
+            <p>A / A			=(§contextMenu)=> 1</p>
+            <p>(A * B) / A		=(§contextMenu)=> B</p>
+            <p>(A * B) / A		=(§drag_and_drop)=> B</p>
+            <p>(A / B) * B		=(§drag_and_drop)=> A</p>
+            
+            <p>A - A			=(§contextMenu)=> 0</p>
+            <p>A - B			=(§contextMenu)=> A + - B</p>
+            
+        </div>
+        <p id="Operators">Operators</p>
+        <div id="ex-operators">
+          
+            <p>Primaire LITTERAL $(["a"-"z"])+</p>
+            <p>Primaire NOMBRE $(["0"-"9"])+</p>
+            <p>Unaire PARENTHESIS "(" ")"</p>
+            <p>Unaire SQRT "sqrt" ""</p>
+            <p>Unaire MOINS_U "-" ""</p>
+            <p>Unaire FACTORIAL "" "!"</p>
+            <p>Unaire NOT "!" ""</p>
+            <p>Unaire CONGRAT "congrat" ""</p>
+            <p>Binaire OR "|" 0</p>
+            <p>Binaire AND "&" 1</p>
+            <p>Binaire EGAL "=" 2</p>
+            <p>Binaire DIFF "!=" 2</p>
+            <p>Binaire INF "<" 2</p>
+            <p>Binaire SUP ">" 2</p>
+            <p>Binaire INFEGAL "<=" 2</p>
+            <p>Binaire SUPEGAL ">=" 2</p>
+            <p>Binaire PLUS "+" 3</p>
+            <p>Binaire MOINS_B "-" 3</p>
+            <p>Binaire FOIS "*" 4</p>
+            <p>Binaire DIVIDE "/" 4</p>
+            <p>Binaire POWER "^" 5</p>
+            
+        </div>
+        <p id="Graphics">Graphics</p>
+        <div id="ex-graphics">
+           
+            <p>PARENTHESIS h "(" ")"</p>
+            <p>SQRT h "sqrt(" 	")"</p>
+            <p>MOINS_U h "-" ""</p>
+            <p>FACTORIAL h "" "!"</p>
+            <p>NOT v "-" ""</p>
+
+            <p>CONGRAT v "congrats!" ""</p>
+
+            <p>OR h "|" ""</p>
+            <p>AND h "&" ""</p>
+            <p>EGAL h "=" ""</p>
+            <p>DIFF h "!=" ""</p>
+            <p>INF h "<" ""</p>
+            <p>SUP h ">" ""</p>
+            <p>INFEGAL h "<=" ""</p>
+            <p>SUPEGAL h ">=" ""</p>
+            <p>PLUS h "+" ""</p>
+            <p>MOINS_B h "-" ""</p>
+            <p>POWER h "^" ""</p>
+            <p>FOIS h "*" ""</p>
+            <p>DIVIDE v "\\over" ""</p>
+        </div>
+        <p id="Formules">Formules</p>
+        <div id="ex-formules">
+         
+            <p>a + a = 2</p>
+            <p>(a / 2) * 2 = 3</p>
+            <p>(a * 3) / (((b * 2) / 2) * 3)</p>
+        </div>
+  </div>
+        <p id="chgt-param">Changement de paramètre</p>
+    <div id="chgt-param">
+            <p>Vous écrivez directement une propiété CSS affilié à certaine partie des pages.
+               <br> <br>Vous pouvez donc pour les couleurs utiliser:
+                <ul>
+                    <li>le code hexa corespondant (exemple #AAAAAA)</li>
+                    <li>les fonctions rgb et rgba</li>
+                    <li>mettre le nom d'une couleur connu du Browser</li>
+                </ul>
+            </p>
+
+            <p>Pour les tailles de caractères vous avez les valeurs en unité : px,em,in,pt,pc,cm,mm.</p>
+
+            <p> Si vous enregistrer un chamgement de paramètre il sera effectué aussitot mais rechagera les pages et vous perdrez votre avancement<br>
+            si vous avez une partie avec une fenêtre pour l'arbre ouvert celle-ci sera uniquement fermé.</p>
+    </div>
+    <p id="game">En Jeu</p>
+    <div id="game">
+        <p>Vous pouvez utiliser le click gauche pour vous balader dans l'arbre et changer de formule courante.</p>
+
+        <p>Vous pouvez avoir une fenêtre dédier à l'arbre.</p>
+    </div>
+  <script>
+
+    const {remote} = require('electron');
+      var conf = remote.getGlobal('conf');
+      document.querySelector('body').style.background = conf.background;
+     require('./nav.js');
+
+    let dr= document.querySelector("div#ex-rules");
+    let dop = document.querySelector("div#ex-operators");
+    let dg = document.querySelector("div#ex-graphics");
+    let df = document.querySelector("div#ex-formules");   
+    let de = document.querySelector("div#exemple");
+    let dp =  document.querySelector("div#chgt-param");
+    let dgame = document.querySelector("div#game");
+
+    document.querySelector('p#Rules').addEventListener('click',()=>{
+
+            if(dr.style.display != 'none')
+                dr.style.display = 'none';
+            else
+                 dr.style.display = 'block';
+    });
+
+    document.querySelector('p#Operators').addEventListener('click',()=>{
+        if(dop.style.display != 'none')
+                dop.style.display = 'none';
+            else
+                dop.style.display = 'block';
+    });
+
+    document.querySelector('p#Graphics').addEventListener('click',()=>{
+
+        if(dg.style.display != 'none')
+                dg.style.display = 'none';
+            else
+                 dg.style.display = 'block';
+    });
+
+    document.querySelector('p#Formules').addEventListener('click',()=>{
+        if(df.style.display != 'none')
+                df.style.display = 'none';
+            else
+                 df.style.display = 'block';
+    });
+
+
+    document.querySelector('p#exemple').addEventListener('click',()=>{
+        if(de.style.display != 'none')
+                de.style.display = 'none';
+            else
+                 de.style.display = 'block';
+    });
+
+
+    document.querySelector('p#chgt-param').addEventListener('click',()=>{
+        if(dp.style.display != 'none')
+                dp.style.display = 'none';
+            else
+                 dp.style.display = 'block';
+    });
+
+    document.querySelector('p#game').addEventListener('click',()=>{
+        if(dgame.style.display != 'none')
+                dgame.style.display = 'none';
+            else
+                 dgame.style.display = 'block';
+    });
+  </script>
+</body>
+</html>
