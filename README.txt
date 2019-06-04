@@ -1,4 +1,4 @@
-pré-requis
+prÃ©-requis
 avoir node-js
 ----------------------------------------
 version utlisées:
@@ -11,4 +11,4 @@ npm install electron-packager --save-dev
 npm start
 
 
-si ça ne marche installer electron voir: http://codaholic.sillo.org/2017/11/30/electron-presentation-et-installation/
+si Ã§a ne marche installer electron voir: http://codaholic.sillo.org/2017/11/30/electron-presentation-et-installation/
