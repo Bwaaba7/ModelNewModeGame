@@ -11,7 +11,7 @@
     },
     "dependencies": {
         "d3": "^5.9.2",
-        "electron": "^1.8.8",
+        "electron": "^11.5.0",
         "jquery": "^3.4.1",
         "konva": "^3.2.6"
     }
